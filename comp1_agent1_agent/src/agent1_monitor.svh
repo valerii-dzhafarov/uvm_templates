@@ -10,6 +10,9 @@ class agent1_monitor extends uvm_monitor;
 
     function new(string name = "agent1_monitor", uvm_component parent = null);
         super.new(name, parent);
+    endfunction
+
+    function void build_phase(uvm_phase phase);
         ap = new ("agent1_mon_ap", this);
     endfunction
 

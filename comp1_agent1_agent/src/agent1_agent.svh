@@ -18,18 +18,19 @@ class agent1_agent extends uvm_agent;
 
     function new(string name = "agent1_agent", uvm_component parent = null);
         super.new(name, parent);
-        monitor_ap = new("monitor_ap", this);
     endfunction
 
     function void build_phase(uvm_phase phase);
-        if ((cfg == null) && uvm_config_db#(cfg)::get(this, "", "cfg", cfg)) begin
+        monitor_ap = new("monitor_ap", this);
+
+        if (cfg == null) begin
             `uvm_fatal (get_type_name(), $sformatf("No cfg object. Set it directly or with uvm_config_db"))
         end
 
-        if (cfg.vif == null) begin
-            `uvm_fatal (get_type_name(), $sformatf("No vif handle. Set it directly in cfg object"))
-        end
-        
+            if (cfg.vif == null) begin
+                `uvm_fatal (get_type_name(), $sformatf("No vif handle. Set it directly in cfg object"))
+            end
+            
         monitor = agent1_monitor::type_id::create($sformatf("monitor"), this);
 
         if ( get_is_active() == UVM_ACTIVE ) begin
