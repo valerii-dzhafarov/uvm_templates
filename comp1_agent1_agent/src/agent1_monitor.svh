@@ -17,12 +17,38 @@ class agent1_monitor extends uvm_monitor;
     endfunction
 
     task run_phase(uvm_phase phase);
+        fork
+            disable_processes_by_reset_on();
+            launch_processes_by_reset_off();
+        join
+    endtask
+
+    virtual task monitor();
         agent1_item item;
         forever begin
             item = agent1_item::type_id::create("agent1_item_monitored");
             @(vif.cb_mon)
             // collect item
             ap.write(item);
+        end
+    endtask
+
+    virtual task disable_processes_by_reset_on();
+        forever begin
+            @(negedge vif.rst_n);
+            disable monitor;
+            // disable other processes
+            // clean the buffers
+        end
+    endtask
+
+    virtual task launch_processes_by_reset_off();
+        forever begin
+            @(posedge vif.rst_n);
+            fork
+                monitor();
+                // start other proc
+            join_none
         end
     endtask
 

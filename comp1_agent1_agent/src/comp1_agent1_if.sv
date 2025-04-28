@@ -10,6 +10,7 @@
 
 interface comp1_agent1_if (input logic clk, input logic rst_n);
 
+
     clocking cb_mon @ (posedge clk);
         default input `COMP1_AGENT1_INPUT_SKEW;
     endclocking

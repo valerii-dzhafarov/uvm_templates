@@ -27,10 +27,10 @@ class agent1_agent extends uvm_agent;
             `uvm_fatal (get_type_name(), $sformatf("No cfg object. Set it directly or with uvm_config_db"))
         end
 
-            if (cfg.vif == null) begin
-                `uvm_fatal (get_type_name(), $sformatf("No vif handle. Set it directly in cfg object"))
-            end
-            
+        if (cfg.vif == null) begin
+            `uvm_fatal (get_type_name(), $sformatf("No vif handle. Set it directly in cfg object"))
+        end
+        
         monitor = agent1_monitor::type_id::create($sformatf("monitor"), this);
 
         if ( get_is_active() == UVM_ACTIVE ) begin

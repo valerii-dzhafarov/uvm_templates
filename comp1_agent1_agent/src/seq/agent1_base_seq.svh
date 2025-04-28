@@ -20,6 +20,11 @@ class agent1_base_seq extends uvm_sequence #(agent1_item);
 
     endtask 
 
+    virtual function void do_record(uvm_recorder recorder);
+      super.do_record(recorder);
+      // record
+    endfunction
+
 endclass 
 
 `endif

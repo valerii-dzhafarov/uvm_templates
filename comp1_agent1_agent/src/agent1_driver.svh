@@ -13,8 +13,8 @@ class agent1_driver extends uvm_driver;
 
     task run_phase(uvm_phase phase);
         fork
-            reset_on_handle();
-            reset_off_handle();
+            disable_processes_by_reset_on();
+            launch_processes_by_reset_off();
         join
     endtask
 
@@ -27,20 +27,22 @@ class agent1_driver extends uvm_driver;
         end
     endtask
 
-    virtual task reset_on_handle();
+    virtual task disable_processes_by_reset_on();
         forever begin
             @(negedge vif.rst_n);
             disable drive;
-            // clean the buffers
             // disable other processes
+            // clean the buffers
         end
     endtask
 
-    virtual task reset_off_handle();
+    virtual task launch_processes_by_reset_off();
         forever begin
-            @(negedge vif.rst_n);
-            drive();
-            // enable other proc
+            @(posedge vif.rst_n);
+            fork
+                drive();
+                // start other proc
+            join_none
         end
     endtask
 
