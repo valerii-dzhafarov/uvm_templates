@@ -3,15 +3,18 @@
 
 class agent1_base_seq extends uvm_sequence #(agent1_item);
     `uvm_object_utils (agent1_base_seq)
-  
-    // Define a constructor
+    
+    `uvm_declare_p_sequencer(agent1_sequencer)
+
     function new ( string name = "agent1_base_seq");
       super.new (name);
-    endfunction : new
+    endfunction
   
     virtual task body();  
 
       req = agent1_item::type_id::create("req");
+      req.cfg  = p_sequencer.cfg;
+      
       start_item(req);
 
       if ( !req.randomize() ) begin
@@ -19,7 +22,6 @@ class agent1_base_seq extends uvm_sequence #(agent1_item);
       end
       
       finish_item(req);
-      
     endtask 
 
     virtual function void do_record(uvm_recorder recorder);

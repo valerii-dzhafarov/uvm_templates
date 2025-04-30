@@ -26,39 +26,40 @@ class agent1_driver extends uvm_driver#(agent1_item);
 
     virtual task drive();
         forever begin
-          @vif.cb_drv;
-          // ut_del_pragma_begin
-          vif.cb_drv.valid <= 1'b0;
-          vif.cb_drv.write <= 1'b0; 	
-      
-            if (req != null) begin
-             `uvm_info (get_type_name(), $sformatf("finish drive the item: \n%s", req.sprint()), UVM_NONE)
-                seq_item_port.item_done();
-          end
-        
-          req = null;
-
-          seq_item_port.try_next_item(req);
-
-            if (req==null) 
-              continue;
+            @vif.cb_drv;
+            // ut_del_pragma_begin
+            vif.cb_drv.valid <= 1'b0;
+            vif.cb_drv.write <= 1'b0; 	
           
+            if (req != null) begin
+                `uvm_info (get_type_name(), $sformatf("finish drive the item: \n%s", req.sprint()), UVM_NONE)
+                seq_item_port.item_done();
+            end
+            
+            req = null;
+            seq_item_port.try_next_item(req);
+            if (req==null) 
+                continue;
+
+            repeat (req.start_delay_cycles)
+                @vif.cb_drv;
+            
             `uvm_info (get_type_name(), $sformatf("start drive the item: \n%s", req.sprint()), UVM_NONE)
 
-          if (req.write) begin
-            vif.cb_drv.data_wr <= req.data; 
-          end
+            if (req.write) begin
+                vif.cb_drv.data_wr <= req.data; 
+            end
 
-          vif.cb_drv.valid <= 1'b1; 
-          vif.cb_drv.write <= req.write; 
+            vif.cb_drv.valid <= 1'b1; 
+            vif.cb_drv.write <= req.write; 
 
-          wait (vif.cb_drv.ready);
+            wait (vif.cb_drv.ready);
         
-          if (!req.write) begin
-            req.data = vif.cb_drv.data_rd;
-            req.err  = vif.cb_drv.err; 
-          end
-        // ut_del_pragma_end
+            if (!req.write) begin
+                req.data = vif.cb_drv.data_rd;
+                req.err  = vif.cb_drv.err; 
+            end
+            // ut_del_pragma_end
         
       end
   endtask

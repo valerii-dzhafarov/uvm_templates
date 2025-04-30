@@ -8,14 +8,14 @@ endif
 # E.g. : include $(EXAMPLE_PATH)/example/config.mk
 
 # Incdirs
-SV_TB_INCDIRS += $(ENV1_ENV_PATH)/src
-SV_TB_INCDIRS += $(ENV1_ENV_PATH)/src/env
-SV_TB_INCDIRS += $(ENV1_ENV_PATH)/src/seq
-SV_TB_INCDIRS += $(ENV1_ENV_PATH)/src/test
-SV_TB_INCDIRS += $(ENV1_ENV_PATH)/src/utils
+SV_TB_INCDIRS += $(ENV1_ENV_PATH)/include
+SV_TB_INCDIRS += $(ENV1_ENV_PATH)/include/env
+SV_TB_INCDIRS += $(ENV1_ENV_PATH)/include/seq
+SV_TB_INCDIRS += $(ENV1_ENV_PATH)/include/test
+SV_TB_INCDIRS += $(ENV1_ENV_PATH)/include/utils
 
-SV_TB_SRC     += $(ENV1_ENV_PATH)/src/comp1_env1_tb_if.sv
-SV_TB_SRC     += $(ENV1_ENV_PATH)/src/comp1_env1_env_pkg.sv
-SV_TB_SRC     += $(ENV1_ENV_PATH)/src/comp1_env1_test_pkg.sv
-SV_TB_SRC     += $(ENV1_ENV_PATH)/src/comp1_env1_wrapper.sv
-SV_TB_SRC     += $(ENV1_ENV_PATH)/src/comp1_env1_tb.sv
+SV_TB_SRC     += $(ENV1_ENV_PATH)/comp1_env1_tb_if.sv
+SV_TB_SRC     += $(ENV1_ENV_PATH)/comp1_env1_env_pkg.sv
+SV_TB_SRC     += $(ENV1_ENV_PATH)/comp1_env1_test_pkg.sv
+SV_TB_SRC     += $(ENV1_ENV_PATH)/comp1_env1_wrapper.sv
+SV_TB_SRC     += $(ENV1_ENV_PATH)/comp1_env1_tb.sv

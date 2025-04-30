@@ -9,8 +9,8 @@ endif
 
 # Incdirs
 
-SV_TB_INCDIRS += $(AGENT1_PATH)/src
-SV_TB_INCDIRS += $(AGENT1_PATH)/src/seq
+SV_TB_INCDIRS += $(AGENT1_PATH)/include
+SV_TB_INCDIRS += $(AGENT1_PATH)/include/seq
 
-SV_TB_SRC     += $(AGENT1_PATH)/src/comp1_agent1_if.sv
-SV_TB_SRC     += $(AGENT1_PATH)/src/comp1_agent1_pkg.sv
+SV_TB_SRC     += $(AGENT1_PATH)/comp1_agent1_if.sv
+SV_TB_SRC     += $(AGENT1_PATH)/comp1_agent1_pkg.sv

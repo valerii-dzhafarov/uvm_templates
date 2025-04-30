@@ -4,11 +4,24 @@
 class agent1_item extends uvm_sequence_item;
     
     `uvm_object_utils(agent1_item)
+    agent1_config cfg;
+
     // ut_del_pragma_begin
     rand logic [31:0] data; 
     rand logic write; 
     logic err = 0;
+    rand int start_delay_cycles;
+
+
+    constraint c_start_delay_cycles {
+        start_delay_cycles inside {[cfg.start_delay_clks_min:cfg.start_delay_clks_max]};
+    }
     // ut_del_pragma_end
+
+    function void pre_randomize();
+        if (cfg == null)
+            `uvm_fatal("NO_CFG_OBJECT", "Set cfg before randomize")
+    endfunction
     
     function new(string name = "agent1_item");
         super.new(name);
@@ -24,6 +37,7 @@ class agent1_item extends uvm_sequence_item;
         data  = rhs_casted.data; 
         write = rhs_casted.write;
         err   = rhs_casted.err;
+        start_delay_cycles   = rhs_casted.start_delay_cycles;
         // ut_del_pragma_end
     endfunction
 
@@ -47,6 +61,7 @@ class agent1_item extends uvm_sequence_item;
         printer.print_field_int("data", data, $bits(data)); 
         printer.print_field_int("write", write, $bits(write)); 
         printer.print_field_int("err", err, $bits(err)); 
+        printer.print_field_int("start_delay_cycles", start_delay_cycles, $bits(start_delay_cycles)); 
         // ut_del_pragma_end
     endfunction
 
@@ -84,6 +99,7 @@ class agent1_item extends uvm_sequence_item;
         s = {s, $sformatf(" data: 0x%h", data)}; 
         s = {s, $sformatf(" write:%1b", write)}; 
         s = {s, $sformatf(" err:%1b",   err)}; 
+        s = {s, $sformatf(" start_delay_cycles:%0d",   start_delay_cycles)}; 
         // ut_del_pragma_end
         return s;
     endfunction

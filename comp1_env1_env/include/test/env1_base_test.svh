@@ -34,14 +34,10 @@ class env1_base_test extends uvm_test;
 
     // ut_del_pragma_begin
     task main_phase (uvm_phase phase);
-        agent1_base_seq agent1_seq = agent1_base_seq::type_id::create("agent1_seq") ;
+        env1_vseq vseq = env1_vseq::type_id::create("env1_vseq") ;
         phase.raise_objection(phase);
-      	repeat(10) begin
-	        int start_delay_cycles = $urandom_range(0,2); // this value should be in item
-            repeat(start_delay_cycles) @(posedge cfg.vif.clk);  // this pause should be in driver
-            agent1_seq.start(env.agent1_master.sequencer);
-        end
-      	#100ns; 
+        vseq.agent1_seqr = env.agent1_master.sequencer;
+        vseq.start(null);
         phase.drop_objection(phase);
     endtask
     // ut_del_pragma_end

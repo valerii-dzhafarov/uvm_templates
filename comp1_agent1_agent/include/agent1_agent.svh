@@ -38,6 +38,7 @@ class agent1_agent extends uvm_agent;
             driver = agent1_driver::type_id::create("driver",this);
             driver.set_cfg(cfg);
             sequencer = agent1_sequencer::type_id::create("sequencer", this);
+            sequencer.set_cfg(cfg);
         end
         
         if (cfg.checker_en) begin
