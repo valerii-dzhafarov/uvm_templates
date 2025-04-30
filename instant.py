@@ -27,8 +27,32 @@ def smart_rename(name, old_phrase, new_phrase):
 
 def process_file(filepath, replacements):
     with open(filepath, 'r', encoding='utf-8') as f:
-        content = f.read()
+        lines = f.readlines()
 
+    # Check for file-level pragma
+    if lines and '// ut_del_pragma_file' in lines[0]:
+        os.remove(filepath)
+        print(f'File deleted due to pragma: {filepath}')
+        return
+
+    # Process content
+    new_lines = []
+    skip_block = False
+    for line in lines:
+        if '// ut_del_pragma_begin' in line:
+            skip_block = True
+            continue
+        if '// ut_del_pragma_end' in line:
+            skip_block = False
+            continue
+        if skip_block:
+            continue
+        if '// ut_del_pragma' in line:
+            continue
+        new_lines.append(line)
+
+    # Apply smart replacements
+    content = ''.join(new_lines)
     for old_phrase, new_phrase in replacements:
         content = smart_replace(content, old_phrase, new_phrase)
 
@@ -37,8 +61,9 @@ def process_file(filepath, replacements):
 
     print(f'Content updated: {filepath}')
 
+
 def ignore_hidden(dir, files):
-    return [f for f in files if f.startswith('.')]  # игнорируем всё скрытое
+    return [f for f in files if f.startswith('.')]  
 
 def rename_structure(root_dir, replacements):
     for current_root, dirs, files in os.walk(root_dir, topdown=False):
@@ -84,24 +109,18 @@ def main():
 
     print(f"Instantiating {args.mode} for {args.company}/{args.name} into {args.target_dir}")
 
-    # Шаблон
     template_dir = "./comp1_agent1_agent" if args.mode == "agent" else "./comp1_env1_env"
 
-    # Куда копируем
     template_basename = os.path.basename(template_dir)
     dst_raw = os.path.join(args.target_dir, template_basename)
 
-    # Копируем шаблонную папку
     shutil.copytree(template_dir, dst_raw, dirs_exist_ok=True,ignore=ignore_hidden)
     print(f"Template copied: {dst_raw}")
 
-    # Список замен
     replacements = [("comp1", args.company), ("env1", args.name), ("agent1", args.name)]
 
-    # Обработка внутри копии
     rename_structure(dst_raw, replacements)
 
-    # Переименование корневой папки
     final_dirname = template_basename
     for old, new in replacements:
         final_dirname = smart_rename(final_dirname, old, new)
