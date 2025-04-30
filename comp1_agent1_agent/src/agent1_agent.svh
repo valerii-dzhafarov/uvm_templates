@@ -32,9 +32,11 @@ class agent1_agent extends uvm_agent;
         end
         
         monitor = agent1_monitor::type_id::create($sformatf("monitor"), this);
+        monitor.set_cfg(cfg);
 
         if ( get_is_active() == UVM_ACTIVE ) begin
             driver = agent1_driver::type_id::create("driver",this);
+            driver.set_cfg(cfg);
             sequencer = agent1_sequencer::type_id::create("sequencer", this);
         end
         
@@ -51,11 +53,9 @@ class agent1_agent extends uvm_agent;
     function void connect_phase(uvm_phase phase);
 
         monitor.ap.connect(monitor_ap);
-        monitor.vif = cfg.vif.mp_monitor;
 
         if ( get_is_active() == UVM_ACTIVE ) begin
             driver.seq_item_port.connect(sequencer.seq_item_export);
-            driver.vif = cfg.vif.mp_driver;
         end
         
         if (cfg.checker_en) begin

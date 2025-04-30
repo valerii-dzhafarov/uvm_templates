@@ -7,13 +7,20 @@ module comp1_env1_tb;
   
     comp1_env1_tb_if    tb_if();
     comp1_env1_wrapper  dut_wrapper(tb_if);
-  
+    
     initial begin
       $timeformat(-9, 3, "ns", 10);
-      uvm_config_db#(virtual comp1_env1_tb_if)::set(null, "", "COMP1_env1_VIF::", tb_if);
+      uvm_config_db#(virtual comp1_env1_tb_if)::set(null, "", "ENV1_VIF::", tb_if);
       run_test();
     end
-  
+    
+    // ut_del_pragma_begin
+    initial begin
+    	$dumpfile("dump.vcd"); 
+      $dumpvars;
+    end
+    // ut_del_pragma_end
+
   endmodule
   
   

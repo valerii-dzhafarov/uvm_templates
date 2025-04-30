@@ -5,11 +5,17 @@ class agent1_monitor extends uvm_monitor;
 
     `uvm_component_utils(agent1_monitor)
 
-    virtual comp1_agent1_if.mp_monitor vif;
+    agent1_config cfg;
     uvm_analysis_port #(agent1_item) ap;
+    virtual comp1_agent1_if.mp_monitor vif;
 
     function new(string name = "agent1_monitor", uvm_component parent = null);
         super.new(name, parent);
+    endfunction
+
+    virtual function void set_cfg (agent1_config in);
+        cfg = in;
+        vif = cfg.vif;
     endfunction
 
     function void build_phase(uvm_phase phase);
@@ -27,9 +33,20 @@ class agent1_monitor extends uvm_monitor;
         agent1_item item;
         forever begin
             item = agent1_item::type_id::create("agent1_item_monitored");
-            @(vif.cb_mon)
-            // collect item
+ 
+            // ut_del_pragma_begin
+            wait (vif.cb_mon.valid && vif.cb_mon.ready);
+            item.write = vif.cb_mon.write;
+            item.err   = vif.cb_mon.err;
+
+            if (vif.cb_mon.write)
+                item.data  = vif.cb_mon.data_wr;
+            else
+                item.data  = vif.cb_mon.data_rd;
+          	// ut_del_pragma_end
+
             ap.write(item);
+            @(vif.cb_mon);
         end
     endtask
 

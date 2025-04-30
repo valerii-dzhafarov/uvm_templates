@@ -13,11 +13,13 @@ class agent1_base_seq extends uvm_sequence #(agent1_item);
 
       req = agent1_item::type_id::create("req");
       start_item(req);
+
       if ( !req.randomize() ) begin
           `uvm_fatal(get_type_name(), $sformatf("Randomize of req failed"))
       end
+      
       finish_item(req);
-
+      
     endtask 
 
     virtual function void do_record(uvm_recorder recorder);
