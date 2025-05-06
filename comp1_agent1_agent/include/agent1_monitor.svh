@@ -8,6 +8,7 @@ class agent1_monitor extends uvm_monitor;
     agent1_config cfg;
     uvm_analysis_port #(agent1_item) ap;
     virtual comp1_agent1_if.mp_monitor vif;
+    local event dis_process_event;
 
     function new(string name = "agent1_monitor", uvm_component parent = null);
         super.new(name, parent);
@@ -53,8 +54,7 @@ class agent1_monitor extends uvm_monitor;
     virtual task disable_processes_by_reset_on();
         forever begin
             @(negedge vif.rst_n);
-            disable monitor;
-            // disable other processes
+            ->dis_process_event; // It is possible to call 'disable monitor' but Xcelium (23.09) doesn't disable inner fork-join_none correctly
             // clean the buffers
         end
     endtask
@@ -64,8 +64,9 @@ class agent1_monitor extends uvm_monitor;
             @(posedge vif.rst_n);
             fork
                 monitor();
-                // start other proc
-            join_none
+                wait(dis_process_event.triggered);
+            join_any
+            disable fork;
         end
     endtask
 

@@ -7,6 +7,7 @@ class agent1_driver extends uvm_driver#(agent1_item);
 
     agent1_config cfg;
     virtual comp1_agent1_if.mp_driver vif;
+    local event dis_process_event;
 
     function new(string name = "agent1_driver", uvm_component parent = null);
         super.new(name, parent);
@@ -67,8 +68,7 @@ class agent1_driver extends uvm_driver#(agent1_item);
     virtual task disable_processes_by_reset_on();
         forever begin
             @(negedge vif.rst_n);
-            disable drive;
-            // disable other processes
+            ->dis_process_event; // It is possible to call 'disable drive' but Xcelium (23.09) doesn't disable inner fork-join_none correctly
             // clean the buffers
         end
     endtask
@@ -78,8 +78,9 @@ class agent1_driver extends uvm_driver#(agent1_item);
             @(posedge vif.rst_n);
             fork
                 drive();
-                // start other proc
-            join_none
+                wait (dis_process_event.triggered);
+            join_any;
+            disable fork;
         end
     endtask
 
