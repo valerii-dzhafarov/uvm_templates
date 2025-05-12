@@ -31,25 +31,32 @@ class agent1_monitor extends uvm_monitor;
     endtask
 
     virtual task monitor();
-        agent1_item item;
-        forever begin
-            item = agent1_item::type_id::create("agent1_item_monitored");
- 
-            // ut_del_pragma_begin
-            wait (vif.cb_mon.valid && vif.cb_mon.ready);
-            item.write = vif.cb_mon.write;
-            item.err   = vif.cb_mon.err;
+      
+	  @(vif.cb_mon);
 
-            if (vif.cb_mon.write)
-                item.data  = vif.cb_mon.data_wr;
-            else
-                item.data  = vif.cb_mon.data_rd;
-          	// ut_del_pragma_end
+      forever begin
+        // ut_del_pragma_begin
+        @(vif.cb_mon);
+        if( !vif.cb_mon.valid || !vif.cb_mon.ready)
+          continue;				
 
-            ap.write(item);
-            @(vif.cb_mon);
+        begin
+          agent1_item item = agent1_item::type_id::create("agent1_item_monitored");
+          item.write = vif.cb_mon.write;
+          item.err   = vif.cb_mon.err;
+
+          if (vif.cb_mon.write)
+            item.data  = vif.cb_mon.data_wr;
+          else
+            item.data  = vif.cb_mon.data_rd;
+
+          ap.write(item);
+          // ut_del_pragma_end
+
         end
+      end 
     endtask
+
 
     virtual task disable_processes_by_reset_on();
         forever begin
