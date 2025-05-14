@@ -29,7 +29,25 @@ The script `instant.py` automatically:
 1. **Copies the chosen template** (`env` or `agent`)
 2. **Renames folders and files**
 3. **Replaces all occurrences** of `comp1`, `env1`, and `agent1` in text and names
+- `comp1`  -- company name
+- `env1`   -- environment name
+- `agent1` -- agent(bus) name
 4. **Generates a ready-to-use UVM component** in the specified target directory
+
+```bash
+python3 ./instant.py -help
+usage: instant.py [-h] [--mode {env,agent}] [--company COMPANY] [--name NAME] [--target_dir TARGET_DIR]
+
+Template instantiation: copy and rename.
+
+options:
+  -h, --help            show this help message and exit
+  --mode {env,agent}    Mode of operation: env or agent (default: env)
+  --company COMPANY     Company name (default: work)
+  --name NAME           Environment or agent name (default: project)
+  --target_dir TARGET_DIR
+                        Where to copy the template and instantiate (default: ./output)
+```
 
 ### 🧪 Example usage:
 

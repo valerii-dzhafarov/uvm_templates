@@ -32,7 +32,7 @@ class agent1_monitor extends uvm_monitor;
 
     virtual task monitor();
       
-	  @(vif.cb_mon);
+      @(vif.cb_mon);
 
       forever begin
         // ut_del_pragma_begin
