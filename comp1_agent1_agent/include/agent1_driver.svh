@@ -76,12 +76,19 @@ class agent1_driver extends uvm_driver#(agent1_item);
     virtual task launch_processes_by_reset_off();
         forever begin
             @(posedge vif.rst_n);
+            init_bus_state();
             fork
                 drive();
                 wait (dis_process_event.triggered);
             join_any;
             disable fork;
         end
+    endtask
+
+    virtual task init_bus_state();
+        // ut_del_pragma_begin
+        {vif.cb_drv.valid, vif.cb_drv.write, vif.cb_drv.data_wr} <= '0;
+        // ut_del_pragma_end
     endtask
 
 endclass
