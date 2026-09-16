@@ -30,13 +30,12 @@ class agent1_driver extends uvm_driver#(agent1_item);
             @vif.cb_drv;
             // ut_del_pragma_begin
             vif.cb_drv.valid <= 1'b0;
-            vif.cb_drv.write <= 1'b0; 	
-          
+            vif.cb_drv.write <= 1'b0;
             if (req != null) begin
                 `uvm_info (get_type_name(), $sformatf("finish drive the item: \n%s", req.sprint()), UVM_NONE)
                 seq_item_port.item_done();
             end
-            
+
             req = null;
             seq_item_port.try_next_item(req);
             if (req==null) 
@@ -68,6 +67,8 @@ class agent1_driver extends uvm_driver#(agent1_item);
     virtual task disable_processes_by_reset_on();
         forever begin
             @(negedge vif.rst_n);
+            init_bus_state();
+            flush_in_flight_item();
             ->dis_process_event; // It is possible to call 'disable drive' but Xcelium (23.09) doesn't disable inner fork-join_none correctly
             // clean the buffers
         end
@@ -76,7 +77,6 @@ class agent1_driver extends uvm_driver#(agent1_item);
     virtual task launch_processes_by_reset_off();
         forever begin
             @(posedge vif.rst_n);
-            init_bus_state();
             fork
                 drive();
                 wait (dis_process_event.triggered);
@@ -87,9 +87,19 @@ class agent1_driver extends uvm_driver#(agent1_item);
 
     virtual task init_bus_state();
         // ut_del_pragma_begin
-        {vif.cb_drv.valid, vif.cb_drv.write, vif.cb_drv.data_wr} <= '0;
+        vif.cb_drv.valid   <= '0;
+        vif.cb_drv.write   <= '0;
+        vif.cb_drv.data_wr <= '0;
         // ut_del_pragma_end
     endtask
+
+    virtual function void flush_in_flight_item();
+        if (req == null) return;
+            `uvm_info(get_type_name(),
+                  "reset aborted an in-flight beat; completing it", UVM_MEDIUM)
+        seq_item_port.item_done();
+        req = null;
+    endfunction
 
 endclass
 
